@@ -9,3 +9,5 @@ countryside
 a volcano
 a waterfall
 mars
+a magic word
+a apocalyptic 

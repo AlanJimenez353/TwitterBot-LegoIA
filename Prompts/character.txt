@@ -11,3 +11,4 @@ assasin
 god
 mummy
 rapper
+zombie
