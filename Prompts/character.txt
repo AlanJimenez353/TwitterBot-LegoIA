@@ -12,3 +12,6 @@ god
 mummy
 rapper
 zombie
+gangster
+detective
+super human
