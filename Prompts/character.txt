@@ -1,13 +1,13 @@
-a man
-a woman
-a velociraptor
-an alien
-a dog
-a cat
-a clown
-a robot
-a police
-an assasin
-a god
-a mummy
-a rapper
+man
+woman
+velociraptor
+alien
+dog
+cat
+clown
+robot
+police
+assasin
+god
+mummy
+rapper
