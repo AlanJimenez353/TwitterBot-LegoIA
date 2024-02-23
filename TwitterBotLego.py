@@ -3,17 +3,32 @@ import random
 import requests
 from openai import OpenAI
 from dotenv import load_dotenv
+from requests_oauthlib import OAuth1Session  
 
 
 # Carga las variables de entorno desde el archivo .env
 load_dotenv()
-api_key = os.getenv("API_KEY")
+
+# Path a imagenes 
 images_path = os.getenv("IMAGES_PATH") # Ruta de la carpeta donde se guardarán las imágenes
 
-# Inicializa el cliente de OpenAI con API key
-openai = OpenAI(api_key=api_key)
+# Variables OpenAI
+api_key = os.getenv("OPENAI_API_KEY")
+openai = OpenAI(api_key=api_key) # Inicializa el cliente de OpenAI con API key
 
-""""------------------------------------------------------------------------- Manejo de archivos y creacion de Prompt ------------------------------------------------------------------------------------------------------------------------------------"""
+# Variables Twitter 
+consumer_key = os.environ.get("TWITTER_API_KEY")
+consumer_secret = os.environ.get("API_SECRET")
+access_token = os.environ.get("ACCESS_TOKEN")
+access_token_secret = os.environ.get("ACCESS_TOKEN_SECRET")
+bearer_token = os.environ.get("BEARER_TOKEN")
+
+# Encabezados para la autenticación
+headers = {
+    "Authorization": f"Bearer {bearer_token}"
+}
+
+""""------------------------------------------------------------------------- Manejo de archivos y creacion de Prompt -------------------------------------------------------------------------------------"""
 
 # Función para leer un dato aleatorio de un archivo
 def read_random_line(filename):
@@ -38,7 +53,7 @@ print(prompt)
 # saltos de línea 
 print("\n" + "-"*80 + "\n")
 
-""""  ------------------------------------------------------------------------- Llamado a API de OpenAI ------------------------------------------------------------------------------------------------------------------------------------"""
+""""  ------------------------------------------------------------------------- Llamado a API de OpenAI ------------------------------------------------------------------------------------------"""
 
 # Generar la imagen usando la API de OpenAI
 try:
@@ -77,3 +92,43 @@ try:
 except Exception as e:
     print(f"Ocurrió un error: {e}")
 
+#------------------------------------------------------------------------------------ Llamado a la API de twitter ----------------------------------------------------------------------------------------------------------------------------
+
+def upload_media_to_twitter(file_path):
+    # Utiliza las variables de autenticación correctas
+    oauth = OAuth1Session(consumer_key, client_secret=consumer_secret, resource_owner_key=access_token, resource_owner_secret=access_token_secret)
+    url = "https://upload.twitter.com/1.1/media/upload.json"
+    with open(file_path, "rb") as file:
+        files = {"media": file}
+        response = oauth.post(url, files=files)
+    if response.status_code == 200:
+        media_id = response.json()["media_id_string"]
+        return media_id
+    else:
+        raise Exception(f"Media upload failed: {response.status_code} {response.text}")
+
+def tweet_with_media(media_id, text):
+    # Utiliza las variables de autenticación correctas
+    oauth = OAuth1Session(consumer_key, client_secret=consumer_secret, resource_owner_key=access_token, resource_owner_secret=access_token_secret)
+    url = "https://api.twitter.com/2/tweets"
+    payload = {
+        "text": text,
+        "media": {
+            "media_ids": [media_id]
+        }
+    }
+    response = oauth.post(url, json=payload)
+    if response.status_code == 201:
+        print("Tweet posted successfully")
+    else:
+        raise Exception(f"Failed to post tweet: {response.status_code} {response.text}")
+
+
+#--------------------------------------------------------------------------------------------------- MAIN -------------------------------------------------------------------------------------------------------------------------------------------
+
+try:
+    media_id = upload_media_to_twitter(path_to_save_image)        # Path de la ultima imagen descargada
+    tweet_text = f"{prompt} - Generated with Dall-e"              # Texto del tweet 
+    tweet_with_media(media_id, tweet_text)                        # Publica el tweet con la imagen
+except Exception as e:
+    print(e)
