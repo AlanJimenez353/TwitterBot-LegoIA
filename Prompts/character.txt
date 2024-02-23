@@ -15,3 +15,14 @@ zombie
 gangster
 detective
 super human
+fight between gangsters
+fight between zombies
+fight between robots
+fight between clowns
+fight between aliens
+fight between velociraptors
+fight between pirates
+villain
+super hero
+pirate
+hacker

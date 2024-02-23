@@ -1,13 +1,19 @@
-a mountain
-a beach
-a forest
-a city
-a desert
-a lake
-space
-countryside
-a volcano
-a waterfall
-mars
-a magic word
-a apocalypse 
+in a mountain
+in a beach
+in a forest
+in a city
+in a desert
+in space
+in a volcano
+in a waterfall
+in mars
+in a magic word
+in a apocalypse 
+inside a piramid
+in a police station
+inside the white house 
+in a apocalyptic city
+inside a car 
+inside a bus
+in a soccer stadium
+a pirate ship

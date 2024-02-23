@@ -47,7 +47,7 @@ activity = read_random_line('activity.txt')
 
 
 # Formar el prompt
-prompt = f"A lego {character} in {place} {activity} {time}"
+prompt = f"A lego {character} {place} {activity} {time}"
 print(prompt)
 
 # saltos de línea 
