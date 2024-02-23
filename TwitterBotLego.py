@@ -45,10 +45,10 @@ time = read_random_line('time.txt')
 place = read_random_line('places.txt')
 character = read_random_line('character.txt')
 activity = read_random_line('activity.txt')
-
+quantity= read_random_line('quantity.txt')
 
 # Formar el prompt
-prompt = f"A lego {character} {place} {activity} {time}"
+prompt = f"{quantity} lego {character} {place} {activity} {time}"
 prompt_original=prompt
 print("\n" + "\n" + "\n")
 print(prompt)
@@ -178,6 +178,8 @@ def tweet_with_media(media_id, text):
 
 try:
     prompt=generate_prompt(prompt)
+    print(prompt)
+    print("\n" + "-"*80 + "\n")
     generar_y_guardar_imagen(prompt,images_path)
     media_id = upload_media_to_twitter(last_image_path)             # Path de la ultima imagen descargada
     tweet_text = f"{prompt_original} - Generated with Dall-e"       # Texto del tweet 

@@ -2,8 +2,6 @@ man
 woman
 velociraptor
 alien
-dog
-cat
 clown
 robot
 police
@@ -28,3 +26,8 @@ super hero
 pirate
 hacker
 politician
+samurai
+ninja from naruto anime
+ninjas from anime
+saiyans from anime
+businessman
