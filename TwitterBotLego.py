@@ -1,7 +1,10 @@
 import os
 import random
 import requests
+import threading
+import tkinter as tk
 from openai import OpenAI
+from tkinter import messagebox
 from datetime import datetime
 from dotenv import load_dotenv
 from requests_oauthlib import OAuth1Session  
@@ -23,13 +26,14 @@ consumer_secret = os.environ.get("API_SECRET")
 access_token = os.environ.get("ACCESS_TOKEN")
 access_token_secret = os.environ.get("ACCESS_TOKEN_SECRET")
 bearer_token = os.environ.get("BEARER_TOKEN")
+prompt_original=""
 last_image_path=""
 # Encabezados para la autenticación
 headers = {
     "Authorization": f"Bearer {bearer_token}"
 }
 
-""""------------------------------------------------------------------------------------------- Manejo de archivos y creacion de Prompt -----------------------------------------------------------------------------------------------"""
+""""------------------------------------------------------------------------------------------- Manejo de archivos -----------------------------------------------------------------------------------------------"""
 
 # Función para leer un dato aleatorio de un archivo
 def read_random_line(filename):
@@ -39,21 +43,6 @@ def read_random_line(filename):
     with open(file_path, 'r', encoding='utf-8') as file:
         lines = file.read().splitlines()
     return random.choice(lines)
-
-# Leer un dato aleatorio de cada archivo
-time = read_random_line('time.txt')
-place = read_random_line('places.txt')
-character = read_random_line('character.txt')
-activity = read_random_line('activity.txt')
-quantity= read_random_line('quantity.txt')
-
-# Formar el prompt
-prompt = f"{quantity} lego {character} {place} {activity} {time}"
-prompt_original=prompt
-print("\n" + "\n" + "\n")
-print(prompt)
-print("\n" + "-"*80 + "\n")
-
 
 
 """"  ------------------------------------------------------------------------------------ Llamado a API GPT para enriqueser prompt ------------------------------------------------------------------------------------------"""
@@ -75,23 +64,36 @@ def obtener_respuesta_enriquecida(prompt_inicial):
     return respuesta_completa.content
 
 """"  ------------------------------------------------------------------------------------ Seleccion del prompt normal o prompt enriquesido ------------------------------------------------------------------------------------------"""
-def generate_prompt(prompt):
+def generate_prompt():
     """
-    Selecciona un prompt basado en la hora actual.
-    Si es antes de las 12 del mediodía, usa el prompt normal.
-    De lo contrario, usa el prompt enriquecido.
+    Genera y posiblemente enriquece un prompt basado en la hora actual.
+    Devuelve el prompt original y el prompt posiblemente enriquecido.
     """
     from datetime import datetime
 
+    # Leer un dato aleatorio de cada archivo
+    time = read_random_line('time.txt')
+    place = read_random_line('places.txt')
+    character = read_random_line('character.txt')
+    activity = read_random_line('activity.txt')
+    quantity= read_random_line('quantity.txt')
+
+    # Formar el prompt original
+    prompt_original = f"{quantity} lego {character} {place} {activity} {time}"
+    
+    print("\n" + "\n" + "\n")
+    print(prompt_original)
+    print("\n" + "-"*80 + "\n")
+    
     # Obtener la hora actual
     hora_actual = datetime.now().hour
 
     # Elegir el prompt basado en la hora
     if hora_actual < 12:
-        return prompt
+        return prompt_original, prompt_original  # Devuelve el prompt original sin cambios
     else:
-
-        return obtener_respuesta_enriquecida(prompt)
+        prompt_enriquecido = obtener_respuesta_enriquecida(prompt_original)
+        return prompt_original, prompt_enriquecido  # Devuelve ambos, el original y el enriquecido
 
 
 """"  ---------------------------------------------------------------------------------------------- Llamado a API de OpenAI ----------------------------------------------------------------------------------------------------------"""
@@ -176,13 +178,60 @@ def tweet_with_media(media_id, text):
 
 #--------------------------------------------------------------------------------------------------- MAIN -------------------------------------------------------------------------------------------------------------------------------------------
 
-try:
-    prompt=generate_prompt(prompt)
-    print(prompt)
-    print("\n" + "-"*80 + "\n")
-    generar_y_guardar_imagen(prompt,images_path)
-    media_id = upload_media_to_twitter(last_image_path)             # Path de la ultima imagen descargada
-    tweet_text = f"{prompt_original} - Generated with Dall-e"       # Texto del tweet 
-    tweet_with_media(media_id, tweet_text)                          # Publica el tweet con la imagen
-except Exception as e:
-    print(e)
+def main():
+    try:
+        prompt_original,prompt = generate_prompt()
+        print(prompt)
+        print("\n" + "-"*80 + "\n")
+        generar_y_guardar_imagen(prompt,images_path)
+        media_id = upload_media_to_twitter(last_image_path)             # Path de la ultima imagen descargada
+        tweet_text = f"{prompt_original} - Generated with Dall-e"       # Texto del tweet 
+        tweet_with_media(media_id, tweet_text)                          # Publica el tweet con la imagen
+    except Exception as e:
+        print(e)
+
+#-------------------------------------------------------------------------------------------- Interfaz Grafica -------------------------------------------------------------------------------------------------------------------------------------------
+
+def ejecutar_bot():
+    # Actualiza la interfaz gráfica para mostrar un mensaje de carga
+    mensaje_carga.set("Ejecutando script...")
+    boton_ejecutar.config(state="disabled")  # Desactiva el botón para evitar múltiples clics
+    
+    def tarea():
+        try:
+            main()
+            messagebox.showinfo("Éxito", "El Bot ha publicado en Twitter exitosamente.")
+        except Exception as e:
+            messagebox.showerror("Error", f"Ocurrió un error al ejecutar el Bot: {e}")
+        finally:
+            mensaje_carga.set("")  # Limpia el mensaje de carga
+            boton_ejecutar.config(state="normal")  # Re-activa el botón
+
+    # Ejecuta la tarea en un hilo separado para evitar bloquear la GUI
+    threading.Thread(target=tarea).start()
+
+# Parte de Tkinter para la GUI
+def iniciar_interfaz():
+    global boton_ejecutar, mensaje_carga  # Hace global el botón y la variable del mensaje de carga
+    
+    ventana = tk.Tk()
+    ventana.title("Twitter Bot GUI")
+    ventana.geometry("400x200")
+
+    titulo = tk.Label(ventana, text="Twitter Bot de Publicación", font=("Arial", 16))
+    titulo.pack(pady=10)
+
+    # Variable de texto para el mensaje de carga
+    mensaje_carga = tk.StringVar()
+    
+    # Etiqueta para mostrar el mensaje de carga
+    etiqueta_carga = tk.Label(ventana, textvariable=mensaje_carga, font=("Arial", 12))
+    etiqueta_carga.pack(pady=5)
+
+    boton_ejecutar = tk.Button(ventana, text="Ejecutar Bot", command=ejecutar_bot, height=2, width=20)
+    boton_ejecutar.pack(pady=20)
+
+    ventana.mainloop()
+
+if __name__ == "__main__":
+    iniciar_interfaz()
