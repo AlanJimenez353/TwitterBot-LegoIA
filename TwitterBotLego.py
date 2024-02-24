@@ -218,7 +218,7 @@ def iniciar_interfaz():
     ventana.title("Twitter Bot GUI")
     ventana.geometry("400x200")
 
-    titulo = tk.Label(ventana, text="Twitter Bot de Publicación", font=("Arial", 16))
+    titulo = tk.Label(ventana, text="Twitter Bot", font=("Arial", 16))
     titulo.pack(pady=10)
 
     # Variable de texto para el mensaje de carga
