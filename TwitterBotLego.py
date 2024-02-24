@@ -9,7 +9,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from requests_oauthlib import OAuth1Session  
 
-
+prompt_global = ""
 # Carga las variables de entorno desde el archivo .env
 load_dotenv()
 
@@ -179,8 +179,10 @@ def tweet_with_media(media_id, text):
 #--------------------------------------------------------------------------------------------------- MAIN -------------------------------------------------------------------------------------------------------------------------------------------
 
 def main():
+    global prompt_global
     try:
         prompt_original,prompt = generate_prompt()
+        prompt_global = prompt_original
         print(prompt)
         print("\n" + "-"*80 + "\n")
         generar_y_guardar_imagen(prompt,images_path)
@@ -200,7 +202,7 @@ def ejecutar_bot():
     def tarea():
         try:
             main()
-            messagebox.showinfo("Éxito", "El Bot ha publicado en Twitter exitosamente.")
+            messagebox.showinfo("Éxito", f"El Bot ha publicado en Twitter exitosamente.\nDescripción de la publicación: {prompt_global}")
         except Exception as e:
             messagebox.showerror("Error", f"Ocurrió un error al ejecutar el Bot: {e}")
         finally:
