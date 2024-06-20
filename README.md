@@ -14,7 +14,7 @@ Este proyecto utiliza un script de Python para generar y subir tweets automátic
 <br>
 *Interfaz Gráfica del Script*
 
-![Ejemplo de Tweet 1](https://github.com/AlanJimenez353/TwitterBot-LegoIA/blob/master/Resources/TwLegoBot.jpg)
+![Ejemplo de Tweet 1](https://github.com/AlanJimenez353/TwitterBot-LegoIA/blob/master/Resources/TwitterProfile.png)
 <br>
 *Cuenta donde se sube el contenido*
 
