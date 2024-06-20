@@ -21,12 +21,12 @@ Este proyecto utiliza un script de Python para generar y subir tweets automátic
 
 ![Ejemplo de Tweet 2](https://github.com/AlanJimenez353/TwitterBot-LegoIA/blob/master/Resources/Lego72.jpg)
 <br>
-*Imagen generada con script*
+*Imagen generada con script : A  lego villain in a volcano resting in summer*
 
 ![Ejemplo de Tweet 2](https://github.com/AlanJimenez353/TwitterBot-LegoIA/blob/master/Resources/Lego61.jpg)
 <br>
-*Imagen generada con script*
+*Imagen generada con script: Argentina winning the word cup in a stadium *
 
 ![Ejemplo de Tweet 2](https://github.com/AlanJimenez353/TwitterBot-LegoIA/blob/master/Resources/Lego18.jpg)
 <br>
-*Imagen generada con script*
+*Imagen generada con script: A lego clown climbing during hurricane season*
